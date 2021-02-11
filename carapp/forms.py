@@ -11,4 +11,9 @@ class SignupForm(UserCreationForm):
 class PostVehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle
-        exclude = ['owner']
+        exclude = ['owner', 'status_of_vehicle']
+
+class RequestRentForm(forms.ModelForm):
+    class Meta:
+        model = RequestRent
+        exclude = ['user', 'vehicle', 'status']
