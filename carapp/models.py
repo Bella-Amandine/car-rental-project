@@ -10,6 +10,20 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} profile'
+
+    def create_profile(self):
+        self.save()
+
+    @classmethod
+    def updateProfile(cls, id, new_profile):
+        cls.objects.filter(id = id).update(profile_picture = new_profile.profile_picture,
+                                           full_name = new_profile.full_name,
+                                           contact = new_profile.contact)
+
+    @classmethod
+    def get_profile_by_id(cls, id):
+        return cls.objects.get(pk = id)
+
 class Vehicle(models.Model):
     owner = models.ForeignKey(Profile, on_delete= models.CASCADE, related_name='vehicles')
     vehicle_picture = models.ImageField(upload_to= 'vehicles/')
@@ -29,8 +43,29 @@ class Vehicle(models.Model):
     vehicle_type = models.CharField(max_length= 40, choices=v_type_choices, default='toyota')
     number_of_passenger = models.IntegerField()
 
+    status_choice = (
+        ('available', 'Available'),
+        ('busy', 'Busy'),
+    )
+
+    status_of_vehicle = models.CharField(max_length= 40, choices= status_choice, default='available')
+
     def __str__(self):
         return self.vehicle_type
+
+    def save_vehicle(self):
+        self.save()
+
+    @classmethod
+    def get_all_available_vehicles(cls):
+        return cls.objects.filter(status_of_vehicle = 'available')
+
+    def set_vehicle_available(self):
+        Vehicle.objects.filter(id = self.id).update(status_of_vehicle = 'available')
+
+    def set_vehicle_busy(self):
+        Vehicle.objects.filter(id = self.id).update(status_of_vehicle = 'busy')
+
 
 class RequestRent(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='requests')
@@ -47,3 +82,19 @@ class RequestRent(models.Model):
 
     def __str__(self):
         return f'{self.vehicle.vehicle_type} RequestRent'
+
+    def create_request(self):
+        self.save()
+
+    @classmethod
+    def get_all_requests_by_vehicle_owner(cls, username):
+        return cls.objects.filter(vehicle__owner__user__username = username)
+
+    @classmethod
+    def approve_request(cls, id):
+        cls.objects.filter(id = id).update(status_choice = 'approved')
+
+    @classmethod
+    def reject_request(cls, id):
+        cls.objects.filter(id=id).update(status_choice='rejected')
+
