@@ -77,9 +77,9 @@ class RequestRent(models.Model):
 
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='requests')
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='requests')
-    comment = models.TextField()
-    start_date = models.DateField("Start Date(mm/dd/yyyy)", auto_now_add=False, auto_now=False)
-    return_date = models.DateField("Return Date(mm/dd/yyyy)", auto_now_add=False, auto_now=False)
+    comment = models.TextField("Reason")
+    start_date = models.DateField("Start Date(yyyy/mm/dd)", auto_now_add=False, auto_now=False)
+    return_date = models.DateField("Return Date(yyyy/mm/dd)", auto_now_add=False, auto_now=False)
     status = models.CharField(max_length= 30, choices=status_choice, default='pending')
 
     def __str__(self):
