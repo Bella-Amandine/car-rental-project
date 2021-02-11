@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignupForm, PostVehicleForm
+from .forms import SignupForm, PostVehicleForm, RequestRentForm
 from .models import Profile, Vehicle, RequestRent
 
 # Create your views here.
@@ -19,7 +19,9 @@ def signup(request):
         return render(request, 'registration/signup.html', {'form': form})
 
 def index(request):
-    return render(request, 'car/index.html')
+    available_vehicles = Vehicle.get_all_available_vehicles()
+
+    return render(request, 'car/index.html', {'vehicles': available_vehicles})
 
 def post_vehicle(request):
     if request.method == 'POST':
@@ -33,3 +35,12 @@ def post_vehicle(request):
     else:
         form = PostVehicleForm()
         return render(request, 'car/new-vehicle.html', {'form': form})
+
+def single_vehicle(request, vehicle_id):
+    vehicle = Vehicle.objects.get(pk = vehicle_id)
+    #Check if not found and redirect to 404 page
+    if request.method == 'POST':
+        pass
+    else:
+        form = RequestRentForm()
+        return render(request, 'car/vehicle-page.html', {'vehicle' : vehicle, 'form': form})
